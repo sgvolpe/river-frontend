@@ -5,9 +5,9 @@ import classes from './AuthForm.module.css';
 const AuthForm = () => {
   const userInputRef = useRef();
   const passwordInputRef = useRef();
-
-
+  
   const [isLogin, setIsLogin] = useState(true);
+  const [token, setToken] = useState(null);
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -21,8 +21,12 @@ const AuthForm = () => {
     // add validation
 
     if (isLogin){
-      const url = 'http://127.0.0.1:8000/api-token-auth/';
+      console.log('Logging...') // toDelete
+      const base_url = 'https://river-331110.uc.r.appspot.com';
+      // const base_url = 'http://127.0.0.1:8000';
+      const url = base_url + '/api-token-auth/'
       const data = {username: enteredEmail, password: enteredPassword}; 
+      console.log(url) // toDelete
       fetch(url,
         {
           method: 'POST',
@@ -31,16 +35,27 @@ const AuthForm = () => {
           },
           body: JSON.stringify(data)
         }
-    ).then(res => {
-      if(res.ok){
-          // ...
-      } else {
-        res.json().then(data => console.log(data));
-      }
+      ).then(res => {
+        if(res.ok){
+            res.json().then(data => {              
+              console.log(data.token)
+              setToken(data.token)
+            })
+        } 
+        else {
+          res.json().then(data => alert(data.non_field_errors[0]));
+        }
       
-    })
+      }).catch(        
+          function(e) {
+            console.log(`Error: ${e}`);
+        }
+      );
+
+
+
     }else{
-      
+      // ...
  
     };
 
